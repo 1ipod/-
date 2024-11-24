@@ -1,0 +1,11 @@
+<form hx-get="/api/start" style="margin: 10px; border-style: solid; width: auto;" hx-swap="outerHTML">
+    <input type="radio" id="Blacklist" name="ra" value="filter"  checked>
+    <label for="Blacklist">Blacklist</label>
+    <input type="radio" id="Whitelist" name="ra" value="accept">
+    <label for="Whitelist">Whitelist</label>
+    <br>
+    <textarea name="accounts">nafo-moderation.bsky.social
+uspol.bluesky.bot
+moderation.bsky.app</textarea>
+    <input type="submit">
+</form>
