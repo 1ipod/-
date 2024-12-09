@@ -94,7 +94,7 @@ pub fn (app &App) label(mut ctx Context) veb.Result {
 		}
 	}
 	if c{
-		ctx.set_custom_header("HX-Reswap","beforebegin") or {println("jank")}
+		ctx.set_custom_header("HX-Reswap","beforebegin") or {panic("jank")}
 		s = x
 	}
 	return ctx.text('<div hx-get="/api/label?accept=$accept&state=${s.unix()}&current=$e"hx-trigger="load delay:1s"hx-swap="outerHTML"></div>${if c {"<div>"+posts[e]+"</div>"} else {""}}')
