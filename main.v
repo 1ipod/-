@@ -67,7 +67,6 @@ pub fn (app &App) start(mut ctx Context) veb.Result {
 	println(accept)
 	return ctx.text('<div hx-get="/api/label?accept=$accept&state=0&current=$e"hx-trigger="load delay:1s"hx-swap="outerHTML"></div>${if c {"<div>"+posts[e]+"</div>"} else {""}}')
 }
-
 @["/api/label"]
 pub fn (app &App) label(mut ctx Context) veb.Result {
 	mut s := time.unix(ctx.query["state"].i64())
@@ -100,16 +99,39 @@ pub fn (app &App) label(mut ctx Context) veb.Result {
 	return ctx.text('<div hx-get="/api/label?accept=$accept&state=${s.unix()}&current=$e"hx-trigger="load delay:1s"hx-swap="outerHTML"></div>${if c {"<div>"+posts[e]+"</div>"} else {""}}')
 }
 
+pub fn (app &App) test(mut ctx Context) veb.Result {
+	x := app.posts.clone().keys().map(it.split(":"))
+	return ctx.text(x.str())
+}
+
+@["/"]
+pub fn (app &App) aboutredirect(mut ctx Context, tab string) veb.Result {
+	return ctx.redirect("/about")
+}
+
 @["/:tab"]
 pub fn (app &App) index(mut ctx Context, tab string) veb.Result {
 	mut include := tab
-	if !(tab.replace(".html","") in ["labels","about"]){
+	if !(tab.replace(".html","") in ["labels","about","labelers"]){
 		include = "error"
 	}
-	labelsactive := if include == "labels" {"active"} else {""}
-	aboutactive := if include == "about" {"active"} else {""}
+	mut labels := map[string][]string{}
+	for labelpair in app.posts.clone().keys(){
+		labels[labelpair.split(":")[0]] << labelpair.split(":")[1]
+	}
+	mut labelers := veb.RawHtml("")
+	for labeler in labels.keys(){
+	labelers += '<div style="margin: 10px; border-style: solid; width: auto;"><h3>$labeler</h3>'
+		for label in labels[labeler]{
+			labelers += label
+			labelers += "<br>"
+		}
+		labelers += "<br></div>"
+	}
+	active := include
     return $veb.html()
 }
+
 const app_port = 8080
 fn main() {
 	shared posts := map[string]string{}
@@ -131,7 +153,7 @@ fn main() {
 		data := msg.payload.bytestr()
 		vals := data.split(" ")
 		label := vals[0].split(":")
-		//println(data)
+		println(data)
 		name := label[0]
 		html :=at_to_html(vals[1], vals[0])
 		//println("waiting for lock")
@@ -139,6 +161,7 @@ fn main() {
 			posts[vals[0]] = html
 			if !(label[1] in labels[name]){
 				labels[name].prepend(name)
+				println(name)
 			}
 			updates[vals[0]] = time.now()
 		}

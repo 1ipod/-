@@ -2,12 +2,12 @@ import atproto, threading
 from atproto_identity.resolver import DidResolver
 from websocket_server import WebsocketServer # type: ignore
 from atproto import FirehoseSubscribeLabelsClient, firehose_models, models, parse_subscribe_labels_message
-
+from config import *
 
 
 def crawler(include_mod):
   client = atproto.Client()
-  client.login()
+  client.login(user,password)
   did = DidResolver()
   if include_mod:
     yield ["moderation.bsky.app","mod.bsky.app"]
@@ -55,10 +55,7 @@ def get_handler(name,s):
       return
 
     for label in labels_message.labels:
-      neg = '(NEG)' if label.neg else ''
-      if label.val in ["porn","nudity"]:
-        continue
-      if "sexual" in label.val:
+      if label.neg:
         continue
       msg = f'{name}:{label.val} {label.uri}'
       s.send_message_to_all(msg)

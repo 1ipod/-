@@ -3,14 +3,15 @@
 <head>
     <meta charset="UTF-8">
     <title>Yet Another Bsky Introspector</title>
-    $libs
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <style>
     body {margin: 0;}
     p{  
         margin: 25px;
     }
-    
+    .content{
+      visibility: hidden;
+    }
     ul.topnav {
       list-style-type: none;
       margin: 0;
@@ -31,7 +32,7 @@
     
     ul.topnav li a:hover:not(.active) {background-color: #111;}
     
-    ul.topnav li a.active {background-color: #4c04aa;}
+    ul.topnav li a.true {background-color: #4c04aa;}
     
     ul.topnav li.right {float: right;}
     
@@ -43,19 +44,24 @@
     
 </head>
 <body>
+  $libs
     <ul class="topnav">
-        <li><a class="$labelsactive" href="labels">Labels</a></li>
-        <li class="right"><a class="$aboutactive" href="about">About</a></li>
+        <li><a class="${active == "labels"}" href="labels">Labels</a></li>
+        <li><a class="${active == "labelers"}" href="labelers">Labelers</a></li>
+        <li class="right"><a class="${active == "about"}" href="about">About</a></li>
+        <li class="right"><a href="../">More from TaxmanIndustries</a></li>
       </ul>
-      
-@if include == "error"
-@include "error"
-@end
-@if include == "labels"
+@if active == "labels"
 @include "labels"
 @end
-@if include == "about"
+@if active == "about"
 @include "about"
+@end
+@if active == "labelers"
+@include "labelers"
+@end
+@if active == "explore"
+@include "explore"
 @end
 </body>
 </html>
