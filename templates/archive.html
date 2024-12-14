@@ -1,0 +1,6 @@
+@include "header.html"
+<form hx-get="./api/archive" style="margin: 10px; border-style: solid; width: auto;" hx-swap="outerHTML">
+    <input type="text" name="aturi"></input>
+    <input type="submit">
+</form>
+@include "footer.html"

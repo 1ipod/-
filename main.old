@@ -6,30 +6,25 @@ import net.http
 import net.websocket
 import json
 
-const libs  = veb.RawHtml('<script src="https://unpkg.com/htmx.org@2.0.3" integrity="sha384-0895/pl2MU10Hqc6jd4RvrthNlDiE9U1tWmX7WRESftEDRosgxNsQG/Ze9YMRzHq" crossorigin="anonymous"></script>\n<script src="https://unpkg.com/htmx-ext-ws@2.0.1/ws.js"></script>')
+const libs  = veb.RawHtml('<script src="https://unpkg.com/htmx.org@2.0.3" integrity="sha384-0895/pl2MU10Hqc6jd4RvrthNlDiE9U1tWmX7WRESftEDRosgxNsQG/Ze9YMRzHq" crossorigin="anonymous"></script>')
 
 pub struct Context {
     veb.Context
 }
-/*
-pub struct Post{
+
+pub struct Data{
 	aturi string
-	ts time.Time
-	labels []&LabelClass
+	labels []string
+	html string
 }
 
-pub struct Labeler{
-	did string
-shared:
-	labels map[string]LabelClass
-}
-
-pub struct LabelClass{
+pub struct Label{
+	publisher string
 	name string
-	last_ten []&Post
-	parent &Labeler
+	recent_post string
+	recent_post_time time.Time
 }
-*/
+
 pub struct App {
 mut:
 	posts map[string]string
@@ -56,16 +51,12 @@ pub fn at_to_html(uri string, fqlabel string)string{
 pub fn (app &App) start(mut ctx Context) veb.Result {
 	mut accept := ""
 	e := ""
-	c := false
-	println(ctx.query)
 	match ctx.query["ra"]{
 		"filter" {accept = app.posts.keys().filter(!(it in ctx.query["accounts"].split("\n"))&&!(it.split(":")[0] in ctx.query["accounts"].split("\n"))).join(",")}
 		"accept" {accept = app.posts.keys().filter((it in ctx.query["accounts"].split("\n"))||(it.split(":")[0] in ctx.query["accounts"].split("\n"))).join(",")}
 		else {}
 	}
-	posts := {"":""}
-	println(accept)
-	return ctx.text('<div hx-get="/api/label?accept=$accept&state=0&current=$e"hx-trigger="load delay:1s"hx-swap="outerHTML"></div>${if c {"<div>"+posts[e]+"</div>"} else {""}}')
+	return ctx.text('<div hx-get="/api/label?accept=$accept&state=0&current=$e"hx-trigger="load delay:1s"hx-swap="outerHTML"></div>')
 }
 @["/api/label"]
 pub fn (app &App) label(mut ctx Context) veb.Result {
@@ -97,11 +88,6 @@ pub fn (app &App) label(mut ctx Context) veb.Result {
 		s = x
 	}
 	return ctx.text('<div hx-get="/api/label?accept=$accept&state=${s.unix()}&current=$e"hx-trigger="load delay:1s"hx-swap="outerHTML"></div>${if c {"<div>"+posts[e]+"</div>"} else {""}}')
-}
-
-pub fn (app &App) test(mut ctx Context) veb.Result {
-	x := app.posts.clone().keys().map(it.split(":"))
-	return ctx.text(x.str())
 }
 
 @["/"]

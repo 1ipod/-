@@ -2862,3 +2862,4 @@ lib/python3.12/site-packages/websockets-13.1.dist-info/REQUESTED
 lib/python3.12/site-packages/websockets-13.1.dist-info/top_level.txt
 lib/python3.12/site-packages/websockets-13.1.dist-info/WHEEL
 config.py
+__pycache__/config.cpython-312.pyc
